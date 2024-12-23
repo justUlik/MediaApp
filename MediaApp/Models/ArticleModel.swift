@@ -5,7 +5,15 @@
 //  Created by Ulyana Eskova on 23.12.2024.
 //
 
-struct ArticleModel {
-    let title: String
-    let content: String
+import Foundation
+
+struct ArticleModel: Decodable {
+    let title: String?
+    let announce: String?
+    let img: ArticleImage?
+    let newsId: Int?
+    
+    struct ArticleImage: Decodable {
+        let url: String?
+    }
 }

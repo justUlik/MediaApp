@@ -17,6 +17,7 @@ final class NewsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureTableView()
+        configureArticles()
     }
 
     // MARK: - Confgures
@@ -27,6 +28,11 @@ final class NewsViewController: UIViewController {
         tableView.dataSource = self
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
     }
+    
+    private func configureArticles() {
+        articleManager.delegate = self
+        articleManager.fetchArticles()
+    }
 }
 
 // MARK: - Extensions
@@ -34,6 +40,14 @@ extension NewsViewController: ArticleManagerDelegate {
     func didUpdateArticles(_ articles: [ArticleModel]) {
         self.articles = articles
         tableView.reloadData()
+    }
+    func didFetchArticles(_ articles: [ArticleModel]) {
+        self.articles = articles
+        tableView.reloadData()
+    }
+    
+    func didFailWithError(_ error: Error) {
+        print("Failed to fetch articles: \(error)")
     }
 }
 
