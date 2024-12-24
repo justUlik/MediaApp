@@ -12,6 +12,7 @@ struct ArticleModel: Decodable {
     let announce: String?
     let img: ArticleImage?
     let newsId: Int?
+    let url: String?
     
     struct ArticleImage: Decodable {
         let url: String?

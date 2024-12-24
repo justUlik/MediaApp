@@ -1,14 +1,7 @@
-//
-//  ArticleManager.swift
-//  MediaApp
-//
-//  Created by Ulyana Eskova on 23.12.2024.
-//
-
 import Foundation
 
 protocol ArticleManagerDelegate: AnyObject {
-    func didFetchArticles(_ articles: [ArticleModel])
+    func didFetchArticles(_ articles: [ArticleModel], requestId: String?)
     func didUpdateArticles(_ articles: [ArticleModel])
     func didFailWithError(_ error: Error)
 }
@@ -18,6 +11,7 @@ class ArticleManager {
     weak var delegate: ArticleManagerDelegate?
     
     private var _articles: [ArticleModel] = []
+    var requestId: String? 
     
     var articles: [ArticleModel] {
         get {
@@ -45,11 +39,11 @@ class ArticleManager {
             guard let data = data else { return }
             do {
                 let newsPage = try JSONDecoder().decode(NewsPage.self, from: data)
+                self?.requestId = newsPage.requestId // Сохраняем requestId
                 if let fetchedArticles = newsPage.news {
                     DispatchQueue.main.async {
-                        // Append fetched articles and notify delegate
                         self?.articles.append(contentsOf: fetchedArticles)
-                        self?.delegate?.didFetchArticles(fetchedArticles)
+                        self?.delegate?.didFetchArticles(fetchedArticles, requestId: self?.requestId)
                     }
                 }
             } catch {
@@ -65,7 +59,7 @@ class ArticleManager {
     }
 }
 
-//MARK: - Extension
+// MARK: - Extension
 extension ArticleModel {
     func generateLink(requestId: String?) -> String? {
         guard let newsId = newsId, let requestId = requestId else { return nil }
